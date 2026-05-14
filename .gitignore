@@ -1,0 +1,23 @@
+# CLion / CMake build directories
+cmake-build-*/
+build/
+cmake-build-debug/
+cmake-build-release/
+
+# Compiled artifacts
+*.o
+*.obj
+*.a
+*.exe
+*.dll
+*.so
+*.dylib
+
+# IDE / tool config (personal, machine-local)
+.idea/
+.vscode/
+.claude/
+
+# OS junk
+.DS_Store
+Thumbs.db
