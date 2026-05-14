@@ -17,6 +17,7 @@ cmake-build-release/
 .idea/
 .vscode/
 .claude/
+CLAUDE.md
 
 # OS junk
 .DS_Store

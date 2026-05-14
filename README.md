@@ -107,8 +107,8 @@ was clear enough.
 
 > The description below reflects the **final** code state (the
 > "severed-cascade / bidirectional vector exchange" design). Note that
-> `CLAUDE.md` and the Doxygen comments may still describe intermediate designs
-> in places — `FractalReservoir.h` is the authoritative source.
+> the Doxygen comments may still describe intermediate designs in places —
+> `FractalReservoir.h` is the authoritative source.
 
 ### Hypercube topology (fixed at DIM=3)
 
@@ -286,8 +286,7 @@ PS1
 Replace `cmake-build-release` with `cmake-build-debug` for Debug. Prefer
 Release for tests and diagnostics (Debug has different float behavior with
 `-ffast-math`). The binaries depend on MinGW runtime DLLs (notably
-`libgomp-1.dll`), so the `$env:PATH` line is required to run them too. See
-`CLAUDE.md` for the full invocation details.
+`libgomp-1.dll`), so the `$env:PATH` line is required to run them too.
 
 ## Usage (reference only)
 
@@ -315,7 +314,6 @@ auto result = benchmark.Run();  // -> { nrmse, train_time_s }
 ```
 FractalHypercubeRC/
 ├── CMakeLists.txt
-├── CLAUDE.md                       Contributor / build guidance (may describe intermediate designs)
 ├── README.md                       This file
 ├── main.cpp                        Diagnostic driver (StateRank survey + NARMA-N validation)
 ├── FractalReservoir.h/.cpp         Recursive hypercube reservoir core (authoritative architecture source)
