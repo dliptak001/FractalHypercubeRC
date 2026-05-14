@@ -14,8 +14,14 @@
 #include "../ESN.h"
 
 /// ========================================================================
-///  NARMA-N Generator (fixed & improved)
+///  NARMA-N Generator
 /// ========================================================================
+///
+/// Target-alignment bug fix (see generate_prediction_task below): an
+/// earlier version paired inputs[t] = u(t) with targets[t] = y(t+1),
+/// which is not learnable and held NARMA NRMSE near 0.65-0.8 regardless
+/// of reservoir configuration. NARMA is system identification, not
+/// forecasting -- the corrected version pairs u(t) with y(t).
 
 template <typename T = float>
 class NARMA_N_Generator
@@ -38,14 +44,25 @@ public:
             throw std::invalid_argument("NARMA_N_Generator: N must be >= 2");
     }
 
-    /// Generate a full NARMA-N series (including u and y).
-    /// Returns {inputs_u, targets_y} where targets_y[t] = y(t+1)
+    /// Generate a NARMA-N series for a prediction task.
+    /// Returns {inputs_u, targets_y} aligned at the same index:
+    /// targets_y[t] = y(t), the NARMA-N output for input u(t).
+    ///
+    /// BUG FIX: this previously returned targets_y[t] = y(t+1) (with an
+    /// extra "+1 for target shift" sample). That made the target depend
+    /// on u(t+1) via the gamma*u(t+1)*u(t+1-N) term -- an input the
+    /// reservoir, driven only through u(t), has never seen. The product
+    /// term was therefore unlearnable and NRMSE collapsed toward 1.0,
+    /// the likely cause of this project's NARMA scores plateauing near
+    /// 0.65 across all depths and configurations. NARMA is system
+    /// identification, not forecasting: y(t) is produced from u(t) and
+    /// u(t-N), so u(t) and y(t) are the correct pairing.
     std::pair<std::vector<T>, std::vector<T>>
     generate_prediction_task(size_t num_steps, size_t warmup_steps = 500)
     {
         if (num_steps == 0) return {{}, {}};
 
-        const size_t total = num_steps + warmup_steps + 1; // +1 for target shift
+        const size_t total = num_steps + warmup_steps;
 
         std::vector<T> u_series(total);
         std::vector<T> y_series(total, T(0));
@@ -81,14 +98,15 @@ public:
             u_hist.push_back(u_t);
         }
 
-        // Return post-warmup portion, shifted for prediction task
+        // Return the post-warmup portion. inputs[t] and targets[t] are
+        // index-aligned: targets[t] = y(t) is the NARMA output for u(t).
         std::vector<T> inputs(num_steps);
         std::vector<T> targets(num_steps);
 
         for (size_t t = 0; t < num_steps; ++t)
         {
             inputs[t]  = u_series[warmup_steps + t];
-            targets[t] = y_series[warmup_steps + t + 1];
+            targets[t] = y_series[warmup_steps + t];
         }
 
         return {inputs, targets};
