@@ -52,8 +52,9 @@ if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
     add_executable(BasicPrediction examples/BasicPrediction.cpp)
     add_executable(StreamingAnomaly examples/StreamingAnomaly.cpp)
     add_executable(SignalClassification examples/SignalClassification.cpp)
+    add_executable(MemoryCapacity examples/MemoryCapacity.cpp)
 
-    set(EXE_TARGETS FractalHypercubeRC BasicPrediction StreamingAnomaly SignalClassification)
+    set(EXE_TARGETS FractalHypercubeRC BasicPrediction StreamingAnomaly SignalClassification MemoryCapacity)
 
     foreach(tgt IN LISTS EXE_TARGETS)
         target_link_libraries(${tgt} PRIVATE FractalHypercubeRCCore)
